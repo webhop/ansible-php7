@@ -1,0 +1,17 @@
+[Unit]
+Description=Unit for PHP-FPM dimensioning
+{% if systemd_wants is defined %}
+Wants={{ systemd_wants | join(' ') }}
+{% else %}
+Wants=php5.6-fpm.service
+{% endif %}
+After=php5.6-fpm.service
+
+[Service]
+Type=oneshot
+Environment="DATE_FORMAT=-u +%Y-%m-%dT%T.%3NZ"
+ExecStart={{ virtualenv_dir }}/php/bin/python {{ scripts_dir }}/php/fpm_dimensioning.py --memratio {{ fpm_total_ram_slice }} --confpath {{ php_fpm_pool_confpath }} --avgmem {{ fpm_avgmem }}
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

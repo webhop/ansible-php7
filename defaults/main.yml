@@ -1,0 +1,25 @@
+php_version: 5.6
+php_post_max_size: 32
+php_upload_max_filesize: 30
+php_memory_limit: 512
+php_max_input_vars: 2500
+php_pm_max_children: 10
+php_fpm_confpath: '/etc/php/5.6/fpm/php.ini'
+php_fpm_pool_confpath: '/etc/php/5.6/fpm/pool.d/www.conf'
+
+# FPM values for monitoring support
+enable_fpm_stats: false
+php_pm_status_path: /fpm-status
+php_pm_slowlog_timeout: 2s
+
+# Python env and script for automatic dimensioning of max_children
+create_virtualenv: yes
+virtualenv_dir: /opt/beamly/virtualenvs
+scripts_dir: /opt/beamly/scripts
+scripts_owner: root
+scripts_group: root
+
+# FPM default values for automatic dimensioning of max_children
+fpm_total_ram_slice: 0.4
+fpm_confpath: '/etc/php5/fpm/pool.d/www.conf'
+fpm_avgmem: 128

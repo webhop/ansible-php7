@@ -1,0 +1,27 @@
+---
+galaxy_info:
+  author: Chris Warren
+  description: Installs the latest PHP5 and associated packages on an ubuntu host
+  company: Beamly Ltd
+  license: MIT
+  min_ansible_version: 1.8
+  platforms:
+  - name: Ubuntu
+    versions:
+    - natty
+    - oneiric
+    - precise
+    - quantal
+    - raring
+    - saucy
+    - trusty
+  - name: Debian
+    versions:
+    - lenny
+    - squeeze
+    - wheezy
+  categories:
+    - cloud
+    - clustering
+    - networking
+dependencies: []

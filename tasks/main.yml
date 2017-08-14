@@ -1,0 +1,171 @@
+- name: Install php deps
+  apt: name=python-software-properties state=present
+
+- name: Add ppa:ondrej
+  apt_repository: repo="ppa:ondrej/php"
+
+- name: Update apt cache
+  apt: update_cache=yes cache_valid_time=86400
+
+- name: Install php packages
+  apt: name={{ item }} state=present
+  with_items:
+    - php5.6
+    - php5.6-common
+    - php5.6-mysqlnd
+    - php5.6-xmlrpc
+    - php5.6-xml
+    - php5.6-bcmath
+    - php5.6-bz2
+    - php5.6-curl
+    - php5.6-gd
+    - php5.6-cli
+    - php5.6-fpm
+    - php5.6-dev
+    - php-pear
+    - php5.6-imap
+    - php5.6-mcrypt
+    - php5.6-dom
+    - php5.6-mbstring
+    - php-memcache
+    - php5.6-sqlite3
+    - php5.6-zip
+    - php5.6-dba
+    - php5.6-soap
+    - php-memcached
+    
+- name: Install php-uuid if not on ubuntu precise
+  apt:
+    name: php-uuid
+    state: present
+  when: ansible_distribution_version != "12.04"
+
+- name: Set post_max_size to {{ php_post_max_size }}M
+  lineinfile: dest="{{ php_fpm_confpath }}" regexp="^post_max_size = .*$" line="post_max_size = {{ php_post_max_size }}M"
+
+- name: Set upload_max_filesize to {{ php_upload_max_filesize }}M
+  lineinfile: dest="{{ php_fpm_confpath }}" regexp="^upload_max_filesize = .*$" line="upload_max_filesize = {{ php_upload_max_filesize }}M"
+
+- name: Set memory_limit to {{ php_memory_limit }}
+  lineinfile: dest="{{ php_fpm_confpath }}" regexp="^memory_limit = .*$" line="memory_limit = {{ php_memory_limit }}M"
+
+- name: Set max_input_vars to {{ php_max_input_vars }}
+  lineinfile: dest="{{ php_fpm_confpath }}" regexp="^;?\s*max_input_vars = .*$" line="max_input_vars = {{ php_max_input_vars }}"
+
+- name: Set FPM max_children
+  lineinfile: dest="{{ php_fpm_pool_confpath }}" regexp="^pm.max_children = .*$" line="pm.max_children = {{ php_pm_max_children | default('10') }}"
+
+- name: Enable FPM slowlog
+  lineinfile: dest="{{ php_fpm_pool_confpath }}" regexp="^;?slowlog = .*$" line="slowlog = /var/log/php5-fpm-slow.log"
+
+- name: Set FPM slowlog timeout
+  lineinfile: dest="{{ php_fpm_pool_confpath }}" regexp="^request_slowlog_timeout = .*$" line="request_slowlog_timeout = {{ php_pm_slowlog_timeout | default('2s') }}"
+
+- name: Set sendmail path
+  lineinfile: dest="{{ php_fpm_confpath }}" regexp=";?\s*sendmail_path = .*$" line="sendmail_path = {{ php_sendmail_path | default('/usr/sbin/sendmail -t -i') }}"
+
+- name: Create symlink for php-fpm5.6 to php5-fpm
+  file:
+    state: link
+    src: /etc/init/php5.6-fpm.conf
+    dest: /etc/init/php5-fpm.conf
+
+- name: Enable status endpoint
+  lineinfile:
+    state: present
+    dest: "{{ php_fpm_pool_confpath }}"
+    regexp: "^pm.status_path = .*$"
+    line: "pm.status_path = {{ php_pm_status_path | default('/fpm-status')}}"
+  when: enable_fpm_stats
+
+- name: Check if htaccess file is present
+  stat:
+    path: "{{ docroot }}/.htaccess"
+  register: stat_htaccess
+  when: enable_fpm_stats
+
+- name: Add override to htaccess file to ensure endpoint is accessible
+  lineinfile:
+    dest: "{{ docroot }}/.htaccess"
+    state: present
+    line: "RewriteCond %{REQUEST_URI} !^{{ php_pm_status_path }}"
+    insertbefore: '\s*RewriteRule \D index\.php \[L\]'
+  when: enable_fpm_stats and stat_htaccess
+
+# Automatic dimensioning with upstart
+- name: Install python dependencies
+  apt:
+      name: "{{ item }}"
+      state: installed
+  with_items:
+    - python-dev
+    - python-setuptools
+    - python-virtualenv
+
+- name: Create scripts directory
+  file:
+    path: "{{ scripts_dir }}/php"
+    state: directory
+    owner: "{{ scripts_owner }}"
+    group: "{{ scripts_group }}"
+    recurse: yes
+    mode: 0755
+
+- name: Create virtualenv directory
+  file:
+    path: "{{ virtualenv_dir }}/php"
+    state: directory
+    owner: "{{ scripts_owner }}"
+    group: "{{ scripts_group }}"
+    recurse: yes
+    mode: 0755
+  when: create_virtualenv|bool
+
+- name: Copy requirements file
+  copy:
+    src: requirements.txt
+    dest: "{{ scripts_dir }}/php/requirements.txt"
+    owner: "{{ scripts_owner }}"
+    group: "{{ scripts_group }}"
+    mode: 0755
+  when: create_virtualenv|bool
+
+- name: Create virtualenv if create_virtualenv is specified
+  pip:
+    requirements: "{{ scripts_dir }}/php/requirements.txt"
+    virtualenv: "{{ virtualenv_dir }}/php"
+    state: latest
+  when: create_virtualenv|bool
+
+- name: Copy Python script which will dimension PHP-FPM
+  copy:
+    src: "{{ item }}"
+    dest: "{{ scripts_dir }}/php/{{ item }}"
+    owner: "{{ scripts_owner }}"
+    group: "{{ scripts_group }}"
+    mode: 0755
+  with_items:
+    - fpm_dimensioning.py
+
+- name: Install PHP-FPM dimensioning upstart script
+  template:
+    src: upstart/fpm_dimensioning.conf.j2
+    dest: /etc/init/fpm_dimensioning.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_lsb.major_release|int < 16
+
+- block:
+  - name: Install PHP-FPM dimensioning service (systemd)
+    template:
+      src: systemd/fpm_dimensioning.service.j2
+      dest: /etc/systemd/system/fpm_dimensioning.service
+      mode: 0644
+      owner: root
+      group: root
+
+  - name: enable PHP-FPM dimensioning service (systemd)
+    shell: /bin/systemctl enable fpm_dimensioning
+
+  when: ansible_lsb.major_release|int >= 16

@@ -1,0 +1,21 @@
+console log
+
+author "Beamly Webhop Team <platform@beamly.com>"
+description "upstart task for PHP-FPM dimensioning"
+
+{% if upstart_events is defined %}
+start on ( {{ upstart_events | join(' and ') }} )
+{% else %}
+start on stopped php-fpm5.6
+{% endif %}
+
+task
+
+env DATE_FORMAT="-u +%Y-%m-%dT%T.%3NZ"
+
+script
+    echo "$(date ${DATE_FORMAT}) - Started PHP-FPM tasks..."
+    {{ virtualenv_dir }}/php/bin/python {{ scripts_dir }}/php/fpm_dimensioning.py --memratio {{ fpm_total_ram_slice }} --confpath {{ php_fpm_pool_confpath }} --avgmem {{ fpm_avgmem }}
+    echo "$(date ${DATE_FORMAT}) - Finished PHP-FPM tasks..."
+end script
+

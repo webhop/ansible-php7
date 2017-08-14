@@ -10,28 +10,28 @@
 - name: Install php packages
   apt: name={{ item }} state=present
   with_items:
-    - php7.2
-    - php7.2-common
-    - php7.2-mysqlnd
-    - php7.2-xmlrpc
-    - php7.2-xml
-    - php7.2-bcmath
-    - php7.2-bz2
-    - php7.2-curl
-    - php7.2-gd
-    - php7.2-cli
-    - php7.2-fpm
-    - php7.2-dev
+    - php7.1
+    - php7.1-common
+    - php7.1-mysqlnd
+    - php7.1-xmlrpc
+    - php7.1-xml
+    - php7.1-bcmath
+    - php7.1-bz2
+    - php7.1-curl
+    - php7.1-gd
+    - php7.1-cli
+    - php7.1-fpm
+    - php7.1-dev
     - php-pear
-    - php7.2-imap
-    - php7.2-mcrypt
-    - php7.2-dom
-    - php7.2-mbstring
+    - php7.1-imap
+    - php7.1-mcrypt
+    - php7.1-dom
+    - php7.1-mbstring
     - php-memcache
-    - php7.2-sqlite3
-    - php7.2-zip
-    - php7.2-dba
-    - php7.2-soap
+    - php7.1-sqlite3
+    - php7.1-zip
+    - php7.1-dba
+    - php7.1-soap
     - php-memcached
 
 - name: Install php-uuid if not on ubuntu precise
@@ -64,10 +64,10 @@
 - name: Set sendmail path
   lineinfile: dest="{{ php_fpm_confpath }}" regexp=";?\s*sendmail_path = .*$" line="sendmail_path = {{ php_sendmail_path | default('/usr/sbin/sendmail -t -i') }}"
 
-- name: Create symlink for php-fpm7.2 to php5-fpm
+- name: Create symlink for php-fpm7.1 to php5-fpm
   file:
     state: link
-    src: /etc/init/php7.2-fpm.conf
+    src: /etc/init/php7.1-fpm.conf
     dest: /etc/init/php5-fpm.conf
 
 - name: Enable status endpoint

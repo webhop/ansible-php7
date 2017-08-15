@@ -56,7 +56,7 @@
   lineinfile: dest="{{ php_fpm_pool_confpath }}" regexp="^pm.max_children = .*$" line="pm.max_children = {{ php_pm_max_children | default('10') }}"
 
 - name: Enable FPM slowlog
-  lineinfile: dest="{{ php_fpm_pool_confpath }}" regexp="^;?slowlog = .*$" line="slowlog = /var/log/php5-fpm-slow.log"
+  lineinfile: dest="{{ php_fpm_pool_confpath }}" regexp="^;?slowlog = .*$" line="slowlog = /var/log/php7-fpm-slow.log"
 
 - name: Set FPM slowlog timeout
   lineinfile: dest="{{ php_fpm_pool_confpath }}" regexp="^request_slowlog_timeout = .*$" line="request_slowlog_timeout = {{ php_pm_slowlog_timeout | default('2s') }}"
@@ -64,11 +64,11 @@
 - name: Set sendmail path
   lineinfile: dest="{{ php_fpm_confpath }}" regexp=";?\s*sendmail_path = .*$" line="sendmail_path = {{ php_sendmail_path | default('/usr/sbin/sendmail -t -i') }}"
 
-- name: Create symlink for php-fpm7.1 to php5-fpm
+- name: Create symlink for php-fpm7.1 to php7-fpm
   file:
     state: link
     src: /etc/init/php7.1-fpm.conf
-    dest: /etc/init/php5-fpm.conf
+    dest: /etc/init/php7-fpm.conf
 
 - name: Enable status endpoint
   lineinfile:

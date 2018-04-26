@@ -64,12 +64,6 @@
 - name: Set sendmail path
   lineinfile: dest="{{ php_fpm_confpath }}" regexp=";?\s*sendmail_path = .*$" line="sendmail_path = {{ php_sendmail_path | default('/usr/sbin/sendmail -t -i') }}"
 
-- name: Create symlink for php-fpm7.1 to php7-fpm
-  file:
-    state: link
-    src: /etc/init/php7.1-fpm.conf
-    dest: /etc/init/php7-fpm.conf
-
 - name: Enable status endpoint
   lineinfile:
     state: present

@@ -21,7 +21,7 @@ def get_php_fpm_memory(php_fpm_total_ram_slice=0.4):
     return mem_megs * php_fpm_total_ram_slice
 
 @argh.arg("--memratio", help="Slice or ratio of RAM allocated to PHP-FPM. 0 means no RAM, 1 means all the RAM available. Defaults to 0.4.", default=0.4)
-@argh.arg("--confpath", help="Pool configuration file path. Defaults to /etc/php5/fpm/pool.d/www.conf.", default="/etc/php5/fpm/pool.d/www.conf")
+@argh.arg("--confpath", help="Pool configuration file path. Defaults to /etc/php/7.2/fpm/pool.d/www.conf.", default="/etc/php/7.2/fpm/pool.d/www.conf")
 @argh.arg("--avgmem", help="Estimated safe average memory per thread (in megs). Defaults to 128.", default=128)
 def write_max_children_config(**kwargs):
     '''Overwrites the max children value in the default PHP-FPM config

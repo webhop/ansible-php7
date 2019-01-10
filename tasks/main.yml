@@ -10,29 +10,34 @@
 - name: Install php packages
   apt: name={{ item }} state=present
   with_items:
-    - php7.1
-    - php7.1-common
-    - php7.1-mysqlnd
-    - php7.1-xmlrpc
-    - php7.1-xml
-    - php7.1-bcmath
-    - php7.1-bz2
-    - php7.1-curl
-    - php7.1-gd
-    - php7.1-cli
-    - php7.1-fpm
-    - php7.1-dev
+    - "php{{ php_version }}"
+    - "php{{ php_version }}-common"
+    - "php{{ php_version }}-mysqlnd"
+    - "php{{ php_version }}-xmlrpc"
+    - "php{{ php_version }}-xml"
+    - "php{{ php_version }}-bcmath"
+    - "php{{ php_version }}-bz2"
+    - "php{{ php_version }}-curl"
+    - "php{{ php_version }}-gd"
+    - "php{{ php_version }}-cli"
+    - "php{{ php_version }}-fpm"
+    - "php{{ php_version }}-dev"
+    - "php{{ php_version }}-imap"
+    - "php{{ php_version }}-dom"
+    - "php{{ php_version }}-mbstring"
+    - "php{{ php_version }}-sqlite3"
+    - "php{{ php_version }}-zip"
+    - "php{{ php_version }}-dba"
+    - "php{{ php_version }}-soap"
     - php-pear
-    - php7.1-imap
-    - php7.1-mcrypt
-    - php7.1-dom
-    - php7.1-mbstring
     - php-memcache
-    - php7.1-sqlite3
-    - php7.1-zip
-    - php7.1-dba
-    - php7.1-soap
     - php-memcached
+
+- name: Install php-mcrypt where the version is less than php7.2
+  apt: name={{ item }} state=present
+  with_items:
+    - "php{{ php_version }}-mcrypt"
+  when: php_version | version_compare('7.2', '<')
 
 - name: Install php-uuid if not on ubuntu precise
   apt:

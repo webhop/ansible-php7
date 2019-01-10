@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Chris Warren
-  description: Installs the latest PHP5 and associated packages on an ubuntu host
+  description: Installs the latest PHP7 and associated packages on an ubuntu host
   company: Beamly Ltd
   license: MIT
   min_ansible_version: 1.8

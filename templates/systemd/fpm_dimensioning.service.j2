@@ -3,9 +3,9 @@ Description=Unit for PHP-FPM dimensioning
 {% if systemd_wants is defined %}
 Wants={{ systemd_wants | join(' ') }}
 {% else %}
-Wants=php5.6-fpm.service
+Wants=php{{ php_version }}-fpm.service
 {% endif %}
-After=php5.6-fpm.service
+After=php{{ php_version }}-fpm.service
 
 [Service]
 Type=oneshot

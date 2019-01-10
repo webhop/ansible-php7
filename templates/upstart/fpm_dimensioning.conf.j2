@@ -6,7 +6,7 @@ description "upstart task for PHP-FPM dimensioning"
 {% if upstart_events is defined %}
 start on ( {{ upstart_events | join(' and ') }} )
 {% else %}
-start on stopped php-fpm5.6
+start on stopped php-fpm{{ php_version }}
 {% endif %}
 
 task
@@ -18,4 +18,3 @@ script
     {{ virtualenv_dir }}/php/bin/python {{ scripts_dir }}/php/fpm_dimensioning.py --memratio {{ fpm_total_ram_slice }} --confpath {{ php_fpm_pool_confpath }} --avgmem {{ fpm_avgmem }}
     echo "$(date ${DATE_FORMAT}) - Finished PHP-FPM tasks..."
 end script
-

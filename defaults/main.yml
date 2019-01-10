@@ -4,8 +4,8 @@ php_upload_max_filesize: 30
 php_memory_limit: 512
 php_max_input_vars: 2500
 php_pm_max_children: 10
-php_fpm_confpath: '/etc/php/7.1/fpm/php.ini'
-php_fpm_pool_confpath: '/etc/php/7.1/fpm/pool.d/www.conf'
+php_fpm_confpath: "/etc/php/{{ php_version }}/fpm/php.ini"
+php_fpm_pool_confpath: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
 
 # FPM values for monitoring support
 enable_fpm_stats: false
@@ -21,5 +21,5 @@ scripts_group: root
 
 # FPM default values for automatic dimensioning of max_children
 fpm_total_ram_slice: 0.4
-fpm_confpath: '/etc/php5/fpm/pool.d/www.conf'
+fpm_confpath: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
 fpm_avgmem: 128

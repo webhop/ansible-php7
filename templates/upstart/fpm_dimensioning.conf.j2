@@ -6,7 +6,7 @@ description "upstart task for PHP-FPM dimensioning"
 {% if upstart_events is defined %}
 start on ( {{ upstart_events | join(' and ') }} )
 {% else %}
-start on stopped php-fpm{{ php_version }}
+start on stopped php{{ php_version }}-fpm
 {% endif %}
 
 task

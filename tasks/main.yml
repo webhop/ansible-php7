@@ -39,6 +39,12 @@
     - "php{{ php_version }}-mcrypt"
   when: php_version | version_compare('7.2', '<')
 
+- name: Install php-uploadprogress when using php7.2
+  apt: name={{ item }} state=present
+  with_items:
+    - "php-uploadprogress"
+  when: php_version | version_compare('7.2', '>=')
+
 - name: Install php-uuid if not on ubuntu precise
   apt:
     name: php-uuid

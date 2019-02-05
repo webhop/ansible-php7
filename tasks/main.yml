@@ -73,7 +73,7 @@
   lineinfile:
     state: present
     dest: "{{ php_fpm_pool_confpath }}"
-    regexp: "^pm.status_path = .*$"
+    regexp: "^;?pm.status_path = .*$"
     line: "pm.status_path = {{ php_pm_status_path | default('/fpm-status')}}"
   when: enable_fpm_stats
 

@@ -1,5 +1,10 @@
-- name: Install php deps
+- name: Install Python deps
   apt: name=python-software-properties state=present
+  when: ansible_distribution_version != '18.04'
+
+- name: Install Python deps
+  apt: name=software-properties-common state=present
+  when: ansible_distribution_version == '18.04'
 
 - name: Add ppa:ondrej
   apt_repository: repo="ppa:ondrej/php"

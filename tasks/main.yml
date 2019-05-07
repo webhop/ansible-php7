@@ -1,8 +1,8 @@
-- name: Install Python deps
+- name: Install Python deps non-18.04 Ubuntu AMI
   apt: name=python-software-properties state=present
   when: ansible_distribution_version != '18.04'
 
-- name: Install Python deps
+- name: Install Python deps on 18.04 Ubuntu AMI
   apt: name=software-properties-common state=present
   when: ansible_distribution_version == '18.04'
 

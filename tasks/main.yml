@@ -50,6 +50,12 @@
     - "php-uploadprogress"
   when: php_version | version_compare('7.2', '>=')
 
+- name: "Ensure use of PHP{{ php_version }} after installing php-uploadprogress"
+  alternatives:
+    name: php
+    path: "/usr/bin/php{{ php_version }}"
+  when: php_version | version_compare('7.0', '>=')
+
 - name: Install php-uuid if not on ubuntu precise
   apt:
     name: php-uuid

@@ -181,12 +181,10 @@
       owner: root
       group: root
 
-  - name: Enable PHP-FPM dimensioning service (systemd)
-    shell: "/bin/systemctl enable fpm_dimensioning.service"
-
-  - name: Start oneshot fpm_dimensioning service for this session (systemd)
+  - name: Enable and start fpm_dimensioning service (systemd)
     service:
       name: fpm_dimensioning
+      state: started
       enabled: yes
 
   when: ansible_lsb.major_release|int >= 16

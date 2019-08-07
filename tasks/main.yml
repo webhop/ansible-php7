@@ -185,6 +185,8 @@
     shell: "/bin/systemctl enable fpm_dimensioning.service"
 
   - name: Start oneshot fpm_dimensioning service for this session (systemd)
-    shell: "/bin/systemctl start fpm_dimensioning.service"
+    service:
+      name: fpm_dimensioning
+      state: started
 
   when: ansible_lsb.major_release|int >= 16

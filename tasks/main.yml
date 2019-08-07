@@ -181,10 +181,15 @@
       owner: root
       group: root
 
-  - name: Enable and start fpm_dimensioning service (systemd)
+  - name: Enable the fpm_dimensioning service (systemd)
+    service:
+      name: fpm_dimensioning
+      enabled: yes
+
+  - name: Start the fpm_dimensioning service (systemd)
     service:
       name: fpm_dimensioning
       state: started
-      enabled: yes
+    ignore_errors: true
 
   when: ansible_lsb.major_release|int >= 16

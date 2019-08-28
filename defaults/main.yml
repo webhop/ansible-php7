@@ -23,3 +23,9 @@ scripts_group: root
 fpm_total_ram_slice: 0.4
 fpm_confpath: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
 fpm_avgmem: 128
+
+# Pecl related values
+php_pecl_install_pecl: false
+php_pecl_install_command: "pecl install"
+# Add extensions to this list to have them installed with this role.
+php_pecl_extensions: []

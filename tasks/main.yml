@@ -86,6 +86,20 @@
 - name: Set sendmail path
   lineinfile: dest="{{ php_fpm_confpath }}" regexp=";?\s*sendmail_path = .*$" line="sendmail_path = {{ php_sendmail_path | default('/usr/sbin/sendmail -t -i') }}"
 
+- name: Ensure pecl is installed (if configured).
+  package:
+    name: php-pear
+    state: present
+  when: php_pecl_install_pecl
+
+- name: Install PECL libaries.
+  shell: "yes '' | {{ php_pecl_install_command }} {{ item }}"
+  register: pecl_result
+  changed_when: pecl_result is succeeded
+  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
+  with_items: "{{ php_pecl_extensions }}"
+  when: php_pecl_install_pecl and php_pecl_extensions
+
 - name: Enable status endpoint
   lineinfile:
     state: present

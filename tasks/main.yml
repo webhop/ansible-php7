@@ -35,8 +35,8 @@
     - "php{{ php_version }}-dba"
     - "php{{ php_version }}-soap"
     - php-pear
-    - php-memcache
-    - php-memcached
+    - php{{ php_version }}-memcache
+    - php{{ php_version }}-memcached
 
 - name: Install php-mcrypt where the version is less than php7.2
   apt: name={{ item }} state=present
@@ -47,7 +47,7 @@
 - name: Install php-uploadprogress when using php7.2
   apt: name={{ item }} state=present
   with_items:
-    - "php-uploadprogress"
+    - "php{{ php_version }}-uploadprogress"
   when: php_version | version_compare('7.2', '>=')
 
 - name: "Ensure use of PHP{{ php_version }} after installing php-uploadprogress"
